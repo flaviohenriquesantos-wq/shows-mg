@@ -1,9 +1,6 @@
-import { useEffect, useState } from 'react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
-import type { Session } from '@supabase/supabase-js'
-import { configurado, supabase } from './supabase'
+import { configurado } from './supabase'
 import { DadosProvider, useDados } from './lib/dados'
-import Login from './pages/Login'
 import Inicio from './pages/Inicio'
 import Cidades from './pages/Cidades'
 import Cidade from './pages/Cidade'
@@ -12,39 +9,26 @@ import Configuracoes from './pages/Configuracoes'
 import Shows from './pages/Shows'
 
 export default function App() {
-  const [sessao, setSessao] = useState<Session | null | undefined>(undefined)
-
-  useEffect(() => {
-    if (!configurado) return
-    supabase.auth.getSession().then(({ data }) => setSessao(data.session))
-    const { data } = supabase.auth.onAuthStateChange((_e, s) => setSessao(s))
-    return () => data.subscription.unsubscribe()
-  }, [])
-
   if (!configurado) {
     return (
       <div className="centro">
         <div className="card login-card">
           <h1>Falta configurar</h1>
           <p>
-            Crie o arquivo <code>.env</code> na pasta do projeto com <code>VITE_SUPABASE_URL</code> e{' '}
-            <code>VITE_SUPABASE_ANON_KEY</code> (veja o README) e reinicie o <code>npm run dev</code>.
+            Informe <code>VITE_SUPABASE_URL</code> e <code>VITE_SUPABASE_ANON_KEY</code> no arquivo <code>.env</code> (veja o README).
           </p>
         </div>
       </div>
     )
   }
-  if (sessao === undefined) return <div className="centro muted">Carregando…</div>
-  if (!sessao) return <Login />
-
   return (
     <DadosProvider>
-      <Shell email={sessao.user.email ?? ''} />
+      <Shell />
     </DadosProvider>
   )
 }
 
-function Shell({ email }: { email: string }) {
+function Shell() {
   const { carregando, erro, recarregar } = useDados()
   const links = [
     ['/', 'Início', '◉'],
@@ -67,12 +51,7 @@ function Shell({ email }: { email: string }) {
             </NavLink>
           ))}
         </nav>
-        <div className="usuario">
-          <span className="muted pequeno esconde-mobile">{email}</span>
-          <button className="btn-link" onClick={() => supabase.auth.signOut()}>
-            Sair
-          </button>
-        </div>
+
       </header>
       <main className="conteudo">
         {erro ? (

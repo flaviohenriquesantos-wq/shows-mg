@@ -15,56 +15,29 @@ Feito com Vite + React + TypeScript e Supabase (banco + login).
 
 ---
 
-## 1. Criar o banco no Supabase
+## Banco de dados
 
-1. Entre em [supabase.com](https://supabase.com) e crie um projeto novo (região **South America (São Paulo)**).
-2. No menu da esquerda, abra **SQL Editor → New query**.
-3. Cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
-4. Abra outra query, cole `supabase/seed.sql` (as 853 cidades) e clique em **Run**.
+O banco já está criado no Supabase, no projeto **shows-mg** (região São Paulo), com as tabelas e as 853 cidades.
+Os arquivos `supabase/schema.sql` e `supabase/seed.sql` servem para recriar o banco em outro projeto, se precisar.
+A URL e a chave pública do projeto já estão em `src/supabase.ts`, então não é preciso configurar variáveis de ambiente.
 
-Os dois arquivos podem ser rodados de novo sem apagar o que você já cadastrou.
+**Sem login:** o app é de uso pessoal e não pede senha. Quem tiver o link consegue ver e editar os dados, então não compartilhe o endereço.
+Para passar a exigir login no futuro, troque `anon, authenticated` por `authenticated` nas regras do `schema.sql` e reative a tela de login.
 
-## 2. Criar os usuários (acesso interno)
+## Publicar na Vercel
 
-1. **Authentication → Sign In / Providers → Email**: desligue **Allow new users to sign up**. Assim ninguém de fora cria conta.
-2. **Authentication → Users → Add user → Create new user**: informe e-mail e senha e marque **Auto Confirm User**.
-   Crie um usuário para cada pessoa da banda que for usar.
+1. Na Vercel: **Add New → Project** e importe o repositório `shows-mg` do GitHub.
+2. Framework: **Vite** (detectado automaticamente). Não precisa de variáveis de ambiente.
+3. Clique em **Deploy**. No celular, abra o link e use **Adicionar à tela inicial**.
 
-## 3. Rodar no computador
+Cada `git push` para a branch `main` publica uma nova versão automaticamente.
 
-Precisa do [Node.js](https://nodejs.org) 18 ou mais novo.
-
-```bash
-cd prospeccao-shows
-cp .env.example .env
-```
-
-Abra o `.env` e preencha com os dados de **Project Settings → API** do Supabase:
-
-```
-VITE_SUPABASE_URL=https://xxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOi...   (a chave "anon public")
-```
-
-Depois:
+## Rodar no computador (opcional)
 
 ```bash
 npm install
 npm run dev
 ```
-
-Abra http://localhost:5173 e entre com o usuário criado no passo 2.
-
-## 4. Publicar para usar no celular (opcional)
-
-O jeito mais simples é a **Vercel** ou a **Netlify** (grátis para esse uso):
-
-1. Suba a pasta para um repositório no GitHub.
-2. Na Vercel: **Add New → Project**, escolha o repositório. Framework: **Vite**.
-3. Em **Environment Variables**, cadastre `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
-4. Deploy. No celular, abra o link e use **Adicionar à tela inicial**.
-
-Os arquivos `vercel.json` e `public/_redirects` já estão prontos para as rotas funcionarem nas duas plataformas.
 
 ## Primeiros ajustes no app
 
@@ -85,13 +58,13 @@ Em **Ajustes**:
 - **Distância**: estimativa (linha reta × 1,3). Confira a rota real antes de orçar o frete.
 - **População**: estimativas IBGE/TCU 2025. **Regiões**: divisão regional do IBGE de 2017.
 - **Aniversários e festas** começam em branco. Preencha conforme levantar; o botão "Histórico IBGE" mostra a data de emancipação.
-- **Segurança**: todo usuário logado vê e edita tudo (é para uso interno). A chave anon pode ficar no front-end; o acesso é protegido por login e pelas regras (RLS) criadas no `schema.sql`.
+- **Backup**: o plano grátis do Supabase não guarda backups. De vez em quando, use os botões Exportar (cidades, shows e interações).
 
 ## Estrutura
 
 ```
 supabase/schema.sql   tabelas, regras de acesso e configurações padrão
 supabase/seed.sql     853 municípios de MG
-src/pages/            telas (Início, Cidades, Cidade, Shows, Relatórios, Ajustes, Login)
+src/pages/            telas (Início, Cidades, Cidade, Shows, Relatórios, Ajustes)
 src/lib/              acesso aos dados e funções de apoio (distância, prioridade, CSV)
 ```

@@ -107,9 +107,9 @@ create trigger municipios_updated_at before update on public.municipios
   for each row execute function public.set_updated_at();
 
 -- ---------------------------------------------------------------------
--- Segurança: só usuários logados acessam. Como o uso é interno,
--- todo usuário logado pode ler e editar tudo. Desative o cadastro
--- público em Authentication > Providers > Email (ver README).
+-- Acesso: o app é de uso pessoal e NÃO tem login. Qualquer pessoa com o
+-- link do app pode ler e editar os dados. Para exigir login no futuro,
+-- troque "anon, authenticated" por "authenticated" abaixo.
 -- ---------------------------------------------------------------------
 alter table public.municipios enable row level security;
 alter table public.contatos   enable row level security;
@@ -122,6 +122,7 @@ declare t text;
 begin
   foreach t in array array['municipios','contatos','interacoes','shows','config'] loop
     execute format('drop policy if exists "logados_tudo" on public.%I', t);
-    execute format('create policy "logados_tudo" on public.%I for all to authenticated using (true) with check (true)', t);
+    execute format('drop policy if exists "app_tudo" on public.%I', t);
+    execute format('create policy "app_tudo" on public.%I for all to anon, authenticated using (true) with check (true)', t);
   end loop;
 end $$;
