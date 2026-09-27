@@ -11,7 +11,7 @@ App interno para organizar a venda de shows da banda para as 853 prefeituras de 
 - Relatórios: funil, resultado por região, shows por mês e atividade semanal
 - Exportação para CSV (abre no Excel)
 
-Feito com Vite + React + TypeScript e Supabase (banco + login).
+Feito com Vite + React + TypeScript e Supabase (banco de dados).
 
 ---
 
