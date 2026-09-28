@@ -25,7 +25,7 @@ export default function Configuracoes() {
       <h1>Ajustes</h1>
       <form className="grade-2" onSubmit={salvar}>
         <section className="card">
-          <h2>Prioridade e distância</h2>
+          <h2>Prioridade, distância e prazos</h2>
           <label>
             Cidade-base (de onde a banda sai)
             <input list="cidades-cfg" value={cidadeBase} onChange={(e) => setCidadeBase(e.target.value)} />
@@ -48,6 +48,10 @@ export default function Configuracoes() {
           <label>
             Fator estrada (× distância em linha reta)
             <input type="number" step={0.05} min={1} value={f.fator_estrada} onChange={(e) => set('fator_estrada', e.target.value)} />
+          </label>
+          <label>
+            Antecedência para contatar (meses antes do aniversário)
+            <input type="number" min={1} max={11} value={f.antecedencia_meses} onChange={(e) => set('antecedencia_meses', e.target.value)} />
           </label>
           <p className="pequeno muted">
             A distância é uma estimativa: linha reta entre as cidades × esse fator. Confira a rota real antes de orçar o frete.

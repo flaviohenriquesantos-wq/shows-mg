@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useDados } from '../lib/dados'
-import { diasAteAniversario, fmtBRL, fmtData, hojeISO } from '../lib/util'
+import { fmtBRL, fmtData, hojeISO } from '../lib/util'
 import { Kpi, LinhaCidade, Vazio } from '../components/ui'
+import ContatosSemana from '../components/ContatosSemana'
 
 const ABERTO = (s: string) => s !== 'Fechado' && s !== 'Sem interesse'
 
@@ -18,11 +19,6 @@ export default function Inicio() {
     const semana = comFollow
       .filter((m) => m.proximo_followup! > hoje && m.proximo_followup! <= em7)
       .sort((a, b) => a.proximo_followup!.localeCompare(b.proximo_followup!))
-    const aniversarios = municipios
-      .map((m) => ({ m, dias: diasAteAniversario(m.aniversario) }))
-      .filter((x) => x.dias != null && x.dias <= 180 && ABERTO(x.m.status))
-      .sort((a, b) => a.dias! - b.dias!)
-      .slice(0, 12)
     const sugestoes = municipios
       .filter((m) => m.prioridade === 'A' && m.status === 'A contatar')
       .sort((a, b) => a.distancia - b.distancia)
@@ -31,7 +27,7 @@ export default function Inicio() {
     const contatados = municipios.filter((m) => m.status !== 'A contatar').length
     const emNegociacao = municipios.filter((m) => m.status === 'Proposta enviada' || m.status === 'Negociando').length
     const fechados = municipios.filter((m) => m.status === 'Fechado').length
-    return { atrasados, deHoje, semana, aniversarios, sugestoes, proxShows, contatados, emNegociacao, fechados }
+    return { atrasados, deHoje, semana, sugestoes, proxShows, contatados, emNegociacao, fechados }
   }, [municipios, shows, hoje, em7])
 
   return (
@@ -46,6 +42,8 @@ export default function Inicio() {
       </div>
 
       <div className="grade-2">
+        <ContatosSemana />
+
         <section className="card">
           <h2>Retornos para fazer</h2>
           {d.atrasados.length + d.deHoje.length + d.semana.length === 0 && (
@@ -87,27 +85,6 @@ export default function Inicio() {
                 />
               ) : null
             })
-          )}
-        </section>
-
-        <section className="card">
-          <h2>Aniversários chegando</h2>
-          <p className="pequeno muted">Cidades com aniversário nos próximos 6 meses — o ideal é oferecer com 4 a 6 meses de antecedência.</p>
-          {d.aniversarios.length === 0 ? (
-            <Vazio>Preencha o aniversário das cidades (na ficha de cada uma) para aparecerem aqui.</Vazio>
-          ) : (
-            d.aniversarios.map(({ m, dias }) => (
-              <LinhaCidade
-                key={m.id}
-                m={m}
-                extra={
-                  <div className="dir-2">
-                    <strong>{m.aniversario}</strong>
-                    <span className="pequeno">em {dias} dias</span>
-                  </div>
-                }
-              />
-            ))
           )}
         </section>
 

@@ -240,3 +240,15 @@ textarea { resize: vertical; }
 .tabela th { text-align: left; font-size: .75rem; color: var(--muted); font-weight: 600; padding: 8px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
 .tabela td { padding: 8px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
 .previa { background: var(--bg); padding: 10px; border-radius: 8px; margin: -4px 0 12px; white-space: pre-wrap; }
+
+/* ---------- contatos da semana ---------- */
+.sem-margem { margin: 2px 0 0; }
+.semana-nav { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
+.semana-nav .btn { padding: 8px 14px; font-size: 1rem; }
+.semana-info { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+.semana-filtros { margin-bottom: 6px; }
+.contagem-semana { margin-left: auto; }
+.grade-lista { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 28px; }
+@media (min-width: 900px) { .grade-lista { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.grade-lista .linha-cidade:last-child { border-bottom: 1px solid var(--linha); }
+.atrasadas { border-top: 1px solid var(--linha); margin-top: 12px; padding-top: 8px; }

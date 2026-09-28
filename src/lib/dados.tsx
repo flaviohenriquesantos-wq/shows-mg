@@ -12,6 +12,7 @@ const CONFIG_PADRAO: Config = {
   msg_email_assunto: '',
   msg_email_corpo: '',
   nome_banda: '',
+  antecedencia_meses: '6',
 }
 
 interface Dados {

@@ -95,7 +95,8 @@ Segue nosso material com release, vídeos e referências de shows anteriores. Te
 Fico à disposição para conversarmos.
 
 Atenciosamente,'),
-  ('nome_banda', 'Nome da Banda')
+  ('nome_banda', 'Nome da Banda'),
+  ('antecedencia_meses', '6')
 on conflict (chave) do nothing;
 
 -- Atualiza updated_at automaticamente

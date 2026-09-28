@@ -83,4 +83,5 @@ export interface Config {
   msg_email_assunto: string
   msg_email_corpo: string
   nome_banda: string
+  antecedencia_meses: string
 }
