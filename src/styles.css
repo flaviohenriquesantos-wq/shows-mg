@@ -252,3 +252,5 @@ textarea { resize: vertical; }
 @media (min-width: 900px) { .grade-lista { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 .grade-lista .linha-cidade:last-child { border-bottom: 1px solid var(--linha); }
 .atrasadas { border-top: 1px solid var(--linha); margin-top: 12px; padding-top: 8px; }
+
+.contato .fonte { margin-top: 4px; font-size: 0.75rem; overflow-wrap: anywhere; }

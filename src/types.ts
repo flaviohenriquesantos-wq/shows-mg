@@ -31,6 +31,7 @@ export interface Municipio {
   proximo_passo: string | null
   cache_proposto: number | null
   observacoes: string | null
+  site: string | null
   updated_at: string
 }
 
@@ -50,6 +51,7 @@ export interface Contato {
   whatsapp: string | null
   email: string | null
   principal: boolean
+  fonte: string | null
   created_at: string
 }
 

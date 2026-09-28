@@ -24,6 +24,7 @@ create table if not exists public.municipios (
   proximo_passo         text,
   cache_proposto        numeric(12,2),
   observacoes           text,
+  site                  text,                          -- site oficial da prefeitura
   updated_at            timestamptz not null default now(),
   constraint status_valido check (status in (
     'A contatar','Contato feito','Aguardando retorno','Proposta enviada',
@@ -40,6 +41,7 @@ create table if not exists public.contatos (
   whatsapp      text,
   email         text,
   principal     boolean not null default false,
+  fonte         text,                                  -- de onde veio o contato
   created_at    timestamptz not null default now()
 );
 create index if not exists contatos_municipio_idx on public.contatos(municipio_id);
@@ -127,3 +129,7 @@ begin
     execute format('create policy "app_tudo" on public.%I for all to anon, authenticated using (true) with check (true)', t);
   end loop;
 end $$;
+
+-- Colunas adicionadas depois (para bancos criados com a versão anterior)
+alter table public.municipios add column if not exists site text;
+alter table public.contatos   add column if not exists fonte text;

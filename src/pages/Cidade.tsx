@@ -73,6 +73,11 @@ export default function Cidade() {
             href={`https://www.google.com/search?q=${encodeURIComponent(`Prefeitura de ${m.nome} MG secretaria de cultura contato`)}`}>
             Buscar contatos
           </a>
+          {m.site && (
+            <a className="btn" target="_blank" rel="noreferrer" href={m.site}>
+              Site da prefeitura
+            </a>
+          )}
           <a className="btn" target="_blank" rel="noreferrer"
             href={`https://www.google.com/search?q=${encodeURIComponent(`${m.nome} MG festa aniversário da cidade programação`)}`}>
             Buscar festas
@@ -441,6 +446,7 @@ function Contatos({
               {c.whatsapp && <span>WhatsApp {c.whatsapp}</span>}
               {c.email && <span>✉ {c.email}</span>}
             </div>
+            {c.fonte && <div className="muted pequeno fonte">Fonte: {c.fonte}</div>}
             <div className="acoes-links">
               {(c.whatsapp || c.telefone) && (
                 <a className="btn wpp" target="_blank" rel="noreferrer" href={linkWpp(c)}>
