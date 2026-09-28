@@ -32,6 +32,12 @@ export interface Municipio {
   cache_proposto: number | null
   observacoes: string | null
   site: string | null
+  prefeito: string | null
+  prefeito_urna: string | null
+  prefeito_partido: string | null
+  vice_prefeito: string | null
+  prefeito_instagram: string | null
+  prefeito_reeleito: boolean | null
   updated_at: string
 }
 
@@ -40,6 +46,21 @@ export interface MunicipioCalc extends Municipio {
   distancia: number
   prioridade: 'A' | 'B' | 'C'
   porte: string
+  /** contratações de show publicadas no PNCP */
+  ct_qtd: number
+  ct_mediana: number | null
+  ct_maior: number | null
+  ct_ultima: string | null
+}
+
+export interface ShowContratado {
+  numero_controle: string
+  municipio_id: number
+  orgao: string | null
+  data: string | null
+  valor: number | null
+  emenda: boolean | null
+  descricao: string | null
 }
 
 export interface Contato {

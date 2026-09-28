@@ -254,3 +254,9 @@ textarea { resize: vertical; }
 .atrasadas { border-top: 1px solid var(--linha); margin-top: 12px; padding-top: 8px; }
 
 .contato .fonte { margin-top: 4px; font-size: 0.75rem; overflow-wrap: anywhere; }
+
+.cab-prefeito { margin-top: 8px; overflow-wrap: anywhere; }
+.ct-resumo { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 4px; }
+.ct-lista { list-style: none; padding: 0; margin: 10px 0 6px; display: grid; gap: 10px; }
+.ct-lista li { border-top: 1px solid var(--linha); padding-top: 8px; overflow-wrap: anywhere; }
+.ct-cab { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; margin-bottom: 2px; }

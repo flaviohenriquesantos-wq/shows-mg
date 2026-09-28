@@ -133,3 +133,35 @@ end $$;
 -- Colunas adicionadas depois (para bancos criados com a versão anterior)
 alter table public.municipios add column if not exists site text;
 alter table public.contatos   add column if not exists fonte text;
+
+-- Prefeito eleito em 2024 (TSE)
+alter table public.municipios
+  add column if not exists prefeito text,
+  add column if not exists prefeito_urna text,
+  add column if not exists prefeito_partido text,
+  add column if not exists vice_prefeito text,
+  add column if not exists prefeito_instagram text,
+  add column if not exists prefeito_reeleito boolean;
+
+-- Shows já contratados pelas prefeituras (PNCP - pncp.gov.br)
+create table if not exists public.shows_contratados (
+  numero_controle text primary key,
+  municipio_id integer not null references public.municipios(id) on delete cascade,
+  orgao text,
+  data date,
+  valor numeric(14,2),
+  emenda boolean,
+  descricao text,
+  created_at timestamptz not null default now()
+);
+create index if not exists shows_contratados_mun_idx on public.shows_contratados(municipio_id);
+alter table public.shows_contratados enable row level security;
+drop policy if exists "app_tudo" on public.shows_contratados;
+create policy "app_tudo" on public.shows_contratados for all to anon, authenticated using (true) with check (true);
+
+create or replace view public.resumo_contratacoes with (security_invoker = true) as
+select municipio_id, count(*)::int as qtd,
+  round(percentile_cont(0.5) within group (order by valor) filter (where valor > 0))::numeric as mediana,
+  max(valor) as maior, max(data) as ultima
+from public.shows_contratados group by municipio_id;
+grant select on public.resumo_contratacoes to anon, authenticated;

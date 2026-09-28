@@ -27,7 +27,7 @@ export function calcular(lista: Municipio[], cfg: Config): MunicipioCalc[] {
   const rb = Number(cfg.raio_b) || 300
   return lista.map((m) => {
     const d = base ? Math.round(distanciaKm(base.latitude, base.longitude, m.latitude, m.longitude) * fator) : 0
-    return { ...m, distancia: d, prioridade: d <= ra ? 'A' : d <= rb ? 'B' : 'C', porte: porte(m.populacao) }
+    return { ...m, distancia: d, prioridade: d <= ra ? 'A' : d <= rb ? 'B' : 'C', porte: porte(m.populacao), ct_qtd: 0, ct_mediana: null, ct_maior: null, ct_ultima: null }
   })
 }
 

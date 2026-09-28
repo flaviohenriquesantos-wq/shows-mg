@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabase'
 import { useDados } from '../lib/dados'
-import { STATUS, TIPOS_INTERACAO, type Contato, type Interacao, type Municipio, type Status } from '../types'
+import { STATUS, TIPOS_INTERACAO, type Contato, type ShowContratado, type Interacao, type Municipio, type Status } from '../types'
 import { fmtBRL, fmtData, fmtDataHora, fmtNum, hojeISO, linkWhatsApp, preencher, soDigitos } from '../lib/util'
 import { Prio, StatusChip, Vazio } from '../components/ui'
 
@@ -68,6 +68,23 @@ export default function Cidade() {
           <span>≈ {m.distancia} km por estrada</span>
           <span>DDD {m.ddd}</span>
         </div>
+        {m.prefeito && (
+          <div className="cab-prefeito pequeno">
+            <strong>Prefeito(a) 2025–2028:</strong> {m.prefeito}
+            {m.prefeito_urna && <> (“{m.prefeito_urna}”)</>}
+            {m.prefeito_partido && <> · {m.prefeito_partido}</>}
+            {m.prefeito_reeleito && <> · reeleito(a)</>}
+            {m.vice_prefeito && <> · vice: {m.vice_prefeito}</>}
+            {m.prefeito_instagram && (
+              <>
+                {' · '}
+                <a href={m.prefeito_instagram} target="_blank" rel="noreferrer">
+                  Instagram
+                </a>
+              </>
+            )}
+          </div>
+        )}
         <div className="acoes-links">
           <a className="btn" target="_blank" rel="noreferrer"
             href={`https://www.google.com/search?q=${encodeURIComponent(`Prefeitura de ${m.nome} MG secretaria de cultura contato`)}`}>
@@ -130,6 +147,7 @@ export default function Cidade() {
               ))}
             </ul>
           </section>
+          <ContratacoesPNCP municipioId={m.id} />
         </div>
 
         <div className="coluna">
@@ -172,6 +190,90 @@ export default function Cidade() {
 }
 
 /* ------------------------------------------------------------------ */
+
+function linkPNCP(n: string) {
+  const r = /^(\d{14})-\d+-0*(\d+)\/(\d{4})$/.exec(n)
+  return r ? `https://pncp.gov.br/app/contratos/${r[1]}/${r[3]}/${r[2]}` : null
+}
+
+function ContratacoesPNCP({ municipioId }: { municipioId: number }) {
+  const [itens, setItens] = useState<ShowContratado[] | null>(null)
+  const [todos, setTodos] = useState(false)
+
+  useEffect(() => {
+    setItens(null)
+    supabase
+      .from('shows_contratados')
+      .select('*')
+      .eq('municipio_id', municipioId)
+      .order('data', { ascending: false })
+      .then(({ data }) => setItens((data as ShowContratado[]) ?? []))
+  }, [municipioId])
+
+  if (itens === null) return null
+  const valores = itens.map((i) => Number(i.valor)).filter((v) => v > 0).sort((a, b) => a - b)
+  const mediana = valores.length ? valores[Math.floor(valores.length / 2)] : null
+  const porMes = new Map<number, number>()
+  for (const i of itens) if (i.data) porMes.set(Number(i.data.slice(5, 7)), (porMes.get(Number(i.data.slice(5, 7))) ?? 0) + 1)
+  const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+  const mostrados = todos ? itens : itens.slice(0, 8)
+
+  return (
+    <section className="card">
+      <h2>Shows que a prefeitura já contratou</h2>
+      {itens.length === 0 ? (
+        <Vazio>Nenhuma contratação de show encontrada no Portal Nacional de Contratações Públicas.</Vazio>
+      ) : (
+        <>
+          <div className="ct-resumo pequeno">
+            <span>
+              <strong>{itens.length}</strong> contratações
+            </span>
+            {mediana !== null && (
+              <span>
+                cachê típico <strong>{fmtBRL(mediana)}</strong>
+              </span>
+            )}
+            {valores.length > 0 && <span>maior {fmtBRL(valores[valores.length - 1])}</span>}
+          </div>
+          <div className="muted pequeno">
+            Assinadas em:{' '}
+            {[...porMes.entries()]
+              .sort((a, b) => a[0] - b[0])
+              .map(([mes, q]) => `${MESES[mes - 1]} (${q})`)
+              .join(', ')}
+          </div>
+          <ul className="ct-lista">
+            {mostrados.map((i) => {
+              const url = linkPNCP(i.numero_controle)
+              return (
+                <li key={i.numero_controle}>
+                  <div className="ct-cab">
+                    <strong>{i.data ? fmtData(i.data) : '—'}</strong>
+                    <span>{i.valor ? fmtBRL(Number(i.valor)) : '—'}</span>
+                    {i.emenda && <span className="chip">emenda parlamentar</span>}
+                    {url && (
+                      <a className="pequeno" href={url} target="_blank" rel="noreferrer">
+                        ver no PNCP
+                      </a>
+                    )}
+                  </div>
+                  <div className="pequeno">{i.descricao}</div>
+                </li>
+              )
+            })}
+          </ul>
+          {itens.length > 8 && (
+            <button className="btn-link" onClick={() => setTodos((t) => !t)}>
+              {todos ? 'Mostrar menos' : `Mostrar todas (${itens.length})`}
+            </button>
+          )}
+          <p className="muted pequeno">Fonte: pncp.gov.br — contratos com “show” no objeto. Datas são da assinatura, normalmente semanas antes do evento.</p>
+        </>
+      )}
+    </section>
+  )
+}
 
 function RegistrarInteracao({
   municipio,
